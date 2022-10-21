@@ -4,31 +4,54 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import {Typography} from '@mui/material';
 import {blue} from '@mui/material/colors';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import ImageIcon from '@mui/icons-material/Image';
-import WorkIcon from '@mui/icons-material/Work';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import {DataGrid, GridColDef, GridSortItem} from '@mui/x-data-grid';
 import moment from 'moment';
 import {formatUnits} from './helper';
-import {Network, Safe, Stats} from './types';
+import {AssetBalance, Network, Safe, Stats} from './types';
 
-function App() {
-    const [network, setNetwork] = useState<Network>('mainnet');
-    const [loading, setLoading] = useState(true);
-    const [safes, setSafes] = useState<Safe[]>([]);
-    const [stats, setStats] = useState<Stats | null>(null);
+const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
+    const {balances} = props;
+
+    const columns: GridColDef[] = [
+        {field: 'asset', headerName: 'Asset', width: 200},
+        {field: 'type', headerName: 'Type', width: 200},
+        {field: 'balance', headerName: 'Balance', width: 200},
+        {field: 'contract', headerName: 'Contract', width: 700},
+    ];
+
+    const rows = [
+        {
+            asset: 'STX',
+            type: '',
+            balance: formatUnits(balances.find(x => x.asset === 'STX')!.balance, 6).toNumber(),
+            contract: ''
+        },
+        ...balances.map(x => x.asset_info && ('decimals' in x.asset_info) ? ({
+            asset: x.asset_info.symbol,
+            type: 'Fungible token',
+            'balance': formatUnits(x.balance, x.asset_info.decimals).toNumber(),
+            contract: x.asset
+        }) : null).filter(x => x).sort((a, b) => Number(b!.balance) - Number(a!.balance)),
+        ...balances.map(x => x.asset_info && !('decimals' in x.asset_info) ? ({
+            asset: x.asset_info.identifier,
+            type: 'Non-fungible token',
+            balance: x.balance,
+            contract: x.asset
+        }) : null).filter(x => x).sort((a, b) => Number(b!.balance) - Number(a!.balance)),
+    ];
+
+    return <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={5}
+        rowsPerPageOptions={[5]}
+        disableSelectionOnClick
+        getRowId={(r) => r.asset}
+        autoHeight
+    />
+}
+
+const SafeList = (props: { safes: Safe[] }) => {
     const [sortModel, setSortModel] = useState<GridSortItem[]>([
         {
             field: 'balance',
@@ -36,30 +59,14 @@ function App() {
         },
     ]);
 
-    useEffect(() => {
-        const fetchSafes = () => {
-            return fetch(`https://${network}-api.multisafe.xyz/safes`).then(r => r.json()).then(safes => {
-                setSafes(safes)
-            })
-        }
+    const {safes} = props;
 
-        const fetchStat = async () => {
-            return fetch(`https://${network}-api.multisafe.xyz/stats`).then(r => r.json()).then(stats => {
-                setStats(stats)
-            })
-        }
+    const rows = safes.map(s => ({
+        ...s,
+        owners: s.owners.length,
+        balance: formatUnits(s.balance, 6).toNumber()
+    }));
 
-        fetchSafes()
-            .then(() => fetchStat())
-            .finally(() => {
-                setLoading(false);
-            })
-    }, [network]);
-
-
-    if (loading) {
-        return null;
-    }
 
     const columns: GridColDef[] = [
         {
@@ -87,11 +94,52 @@ function App() {
         },
     ];
 
-    const rows = safes.map(s => ({
-        ...s,
-        owners: s.owners.length,
-        balance: formatUnits(s.balance, 6).toNumber()
-    }));
+    return <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={20}
+        rowsPerPageOptions={[20]}
+        disableSelectionOnClick
+        getRowId={(r) => r.address}
+        autoHeight
+        experimentalFeatures={{newEditingApi: false}}
+        sortModel={sortModel}
+        onSortModelChange={(model) => setSortModel(model)}
+    />
+}
+
+function App() {
+    const [network, setNetwork] = useState<Network>('mainnet');
+    const [loading, setLoading] = useState(true);
+    const [safes, setSafes] = useState<Safe[]>([]);
+    const [stats, setStats] = useState<Stats | null>(null);
+
+
+    useEffect(() => {
+        const fetchSafes = () => {
+            return fetch(`https://${network}-api.multisafe.xyz/safes`).then(r => r.json()).then(safes => {
+                setSafes(safes)
+            })
+        }
+
+        const fetchStat = async () => {
+            return fetch(`https://${network}-api.multisafe.xyz/stats`).then(r => r.json()).then(stats => {
+                setStats(stats)
+            })
+        }
+
+        fetchSafes()
+            .then(() => fetchStat())
+            .then(() => {
+                setLoading(false);
+            })
+    }, [network]);
+
+
+    if (loading) {
+        return null;
+    }
+
 
     const {balances} = stats!;
 
@@ -127,23 +175,12 @@ function App() {
                 </ButtonGroup>
             </Box>
             <Box sx={{mb: '50px'}}>
-                <Typography sx={{mb: '10px', fontSize: '26px', fontWeight: '600'}}>Total Balances</Typography>
-
+                <Typography sx={{mb: '10px', fontSize: '22px', fontWeight: '500'}}>Total Balances</Typography>
+                <AssetBalanceList balances={stats!.balances}/>
             </Box>
             <Box sx={{mb: '50px'}}>
-                <Typography sx={{mb: '10px', fontSize: '26px', fontWeight: '600'}}>Safe List</Typography>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    pageSize={20}
-                    rowsPerPageOptions={[20]}
-                    disableSelectionOnClick
-                    getRowId={(r) => r.address}
-                    autoHeight
-                    experimentalFeatures={{newEditingApi: false}}
-                    sortModel={sortModel}
-                    onSortModelChange={(model) => setSortModel(model)}
-                />
+                <Typography sx={{mb: '10px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
+                <SafeList safes={safes}/>
             </Box>
         </div>
     );
