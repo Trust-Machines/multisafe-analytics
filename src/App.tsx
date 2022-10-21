@@ -2,15 +2,37 @@ import React, {useEffect, useState} from 'react';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import {Typography} from '@mui/material';
-import {blue, grey} from '@mui/material/colors';
-import {Tooltip} from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import {blue, grey} from '@mui/material/colors';
 import LinearProgress from '@mui/material/LinearProgress';
+import Paper from '@mui/material/Paper';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 import {DataGrid, GridColDef, GridSortItem} from '@mui/x-data-grid';
 import moment from 'moment';
 import {formatUnits} from './helper';
 import {AssetBalance, Network, Safe, Stats} from './types';
+
+const CloseModal = (props: { onClick: () => void }) => {
+    return <IconButton
+        aria-label="close"
+        onClick={props.onClick}
+        sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+        }}
+    >
+        <CloseIcon/>
+    </IconButton>
+}
+
 
 const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
     const {balances} = props;
@@ -54,7 +76,7 @@ const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
     />
 }
 
-const SafeList = (props: { safes: Safe[] }) => {
+const SafeList = (props: { safes: Safe[], onSafeSelect: (safe: string) => void }) => {
     const [sortModel, setSortModel] = useState<GridSortItem[]>([
         {
             field: 'balance',
@@ -62,7 +84,7 @@ const SafeList = (props: { safes: Safe[] }) => {
         },
     ]);
 
-    const {safes} = props;
+    const {safes, onSafeSelect} = props;
 
     const rows = safes.map(s => ({
         ...s,
@@ -79,6 +101,8 @@ const SafeList = (props: { safes: Safe[] }) => {
                     ':hover': {
                         textDecoration: 'underline'
                     }
+                }} onClick={() => {
+                    onSafeSelect(p.value);
                 }}>{p.value}</Box>
             }
         },
@@ -149,9 +173,14 @@ function App() {
             })
     }, [network]);
 
+    const showSafe = (safe: string) => {
+        fetch(`https://${network}-api.multisafe.xyz/safes/${safe}`).then(r => r.json()).then(safe => {
+            setSafe(safe);
+        })
+    }
 
     return (
-        <div className="wrapper">
+        <Box>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -172,6 +201,20 @@ function App() {
                     }} variant={network === 'testnet' ? 'contained' : 'outlined'}>Testnet</Button>
                 </ButtonGroup>
             </Box>
+            {safe && <>
+                <Dialog open={true} fullScreen onClose={() => {
+                    setSafe(null);
+                }}>
+                    <DialogTitle>{safe.address}<CloseModal onClick={() => {
+                        setSafe(null);
+                    }}/></DialogTitle>
+                    <DialogContent sx={{padding: '20px'}}>
+                        <Box>
+
+                        </Box>
+                    </DialogContent>
+                </Dialog>
+            </>}
             {(() => {
                 if (loading) {
                     return <LinearProgress/>;
@@ -188,18 +231,17 @@ function App() {
                         <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Total Balances</Typography>
                         <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>Assets stored on all MultiSafe
                             wallets.</Typography>
-                        <AssetBalanceList balances={stats!.balances}/>
+                        <Paper><AssetBalanceList balances={stats!.balances}/></Paper>
                     </Box>
                     <Box sx={{mb: '50px'}}>
                         <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
                         <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>All MultiSafe wallets
                             deployed.</Typography>
-                        <SafeList safes={safes}/>
+                        <Paper><SafeList safes={safes} onSafeSelect={showSafe}/></Paper>
                     </Box>
                 </>
-
             })()}
-        </div>
+        </Box>
     );
 }
 
