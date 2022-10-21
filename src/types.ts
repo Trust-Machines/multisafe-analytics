@@ -1,5 +1,5 @@
 export type Status = 'mempool' | 'microblock' | 'anchor' | 'failed';
-
+export type Network = 'mainnet' | 'testnet';
 
 export interface Safe {
     address: string,
@@ -14,5 +14,22 @@ export interface Safe {
     balance: string
 }
 
+export interface AssetBalance {
+    asset: string,
+    balance: string,
+    asset_info?: {
+        address: string,
+        identifier: string
+    } | {
+        "address": string,
+        "identifier": string,
+        "name": string,
+        "symbol": string,
+        "decimals": number
+    }
+}
 
-export type Network = 'mainnet' | 'testnet';
+export interface Stats {
+    safe_count: number,
+    balances: AssetBalance[]
+}

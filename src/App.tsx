@@ -3,16 +3,32 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import {Typography} from '@mui/material';
+import {blue} from '@mui/material/colors';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ImageIcon from '@mui/icons-material/Image';
+import WorkIcon from '@mui/icons-material/Work';
+import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import {DataGrid, GridColDef, GridSortItem} from '@mui/x-data-grid';
 import moment from 'moment';
 import {formatUnits} from './helper';
-import {Network, Safe} from './types';
-import {blue} from '@mui/material/colors';
+import {Network, Safe, Stats} from './types';
 
 function App() {
     const [network, setNetwork] = useState<Network>('mainnet');
     const [loading, setLoading] = useState(true);
     const [safes, setSafes] = useState<Safe[]>([]);
+    const [stats, setStats] = useState<Stats | null>(null);
     const [sortModel, setSortModel] = useState<GridSortItem[]>([
         {
             field: 'balance',
@@ -21,15 +37,23 @@ function App() {
     ]);
 
     useEffect(() => {
-        const fetchSafes = async () => {
-            await fetch(`https://${network}-api.multisafe.xyz/safes`).then(r => r.json()).then(safes => {
+        const fetchSafes = () => {
+            return fetch(`https://${network}-api.multisafe.xyz/safes`).then(r => r.json()).then(safes => {
                 setSafes(safes)
-            }).finally(() => {
-                setLoading(false);
             })
         }
 
-        fetchSafes().then();
+        const fetchStat = async () => {
+            return fetch(`https://${network}-api.multisafe.xyz/stats`).then(r => r.json()).then(stats => {
+                setStats(stats)
+            })
+        }
+
+        fetchSafes()
+            .then(() => fetchStat())
+            .finally(() => {
+                setLoading(false);
+            })
     }, [network]);
 
 
@@ -69,6 +93,17 @@ function App() {
         balance: formatUnits(s.balance, 6).toNumber()
     }));
 
+    const {balances} = stats!;
+
+    /*
+
+    const token = stats?.balances.filter(x => x.asset === 'STX');
+    const fungible = stats?.balances.filter(x => x.asset !== 'STX' && x.asset_info && ('decimals' in x.asset_info));
+    const nonFungible = stats?.balances.filter(x => x.asset !== 'STX' && x.asset_info && !('decimals' in x.asset_info));
+    console.log(nonFungible)
+
+     */
+
     return (
         <div className="wrapper">
             <Box sx={{
@@ -90,6 +125,10 @@ function App() {
                         setNetwork('testnet')
                     }} variant={network === 'testnet' ? 'contained' : 'outlined'}>Testnet</Button>
                 </ButtonGroup>
+            </Box>
+            <Box sx={{mb: '50px'}}>
+                <Typography sx={{mb: '10px', fontSize: '26px', fontWeight: '600'}}>Total Balances</Typography>
+
             </Box>
             <Box sx={{mb: '50px'}}>
                 <Typography sx={{mb: '10px', fontSize: '26px', fontWeight: '600'}}>Safe List</Typography>
