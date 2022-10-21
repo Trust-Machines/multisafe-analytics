@@ -3,7 +3,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import {Typography} from '@mui/material';
-import {blue} from '@mui/material/colors';
+import {blue, grey} from '@mui/material/colors';
 import {DataGrid, GridColDef, GridSortItem} from '@mui/x-data-grid';
 import moment from 'moment';
 import {formatUnits} from './helper';
@@ -135,22 +135,11 @@ function App() {
             })
     }, [network]);
 
-
     if (loading) {
         return null;
     }
 
-
-    const {balances} = stats!;
-
-    /*
-
-    const token = stats?.balances.filter(x => x.asset === 'STX');
-    const fungible = stats?.balances.filter(x => x.asset !== 'STX' && x.asset_info && ('decimals' in x.asset_info));
-    const nonFungible = stats?.balances.filter(x => x.asset !== 'STX' && x.asset_info && !('decimals' in x.asset_info));
-    console.log(nonFungible)
-
-     */
+    const {safe_count} = stats!;
 
     return (
         <div className="wrapper">
@@ -159,12 +148,12 @@ function App() {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                mb: '50px'
+                mb: '30px'
             }}>
                 <Box component="img" src="/logo512.png" sx={{width: '140px', height: '140px', mb: '20px'}}/>
                 <Typography sx={{fontSize: '24px'}}><strong>MultiSafe</strong> Analytics</Typography>
             </Box>
-            <Box sx={{display: 'flex', justifyContent: 'center', mb: '50px'}}>
+            <Box sx={{display: 'flex', justifyContent: 'center', mb: '25px'}}>
                 <ButtonGroup variant="outlined" aria-label="outlined button group">
                     <Button onClick={() => {
                         setNetwork('mainnet')
@@ -174,8 +163,13 @@ function App() {
                     }} variant={network === 'testnet' ? 'contained' : 'outlined'}>Testnet</Button>
                 </ButtonGroup>
             </Box>
+            <Box sx={{mb: '25px', textAlign: 'center', fontSize: '22px', fontWeight: '500'}}>
+                {safe_count} Safes
+            </Box>
             <Box sx={{mb: '50px'}}>
-                <Typography sx={{mb: '10px', fontSize: '22px', fontWeight: '500'}}>Total Balances</Typography>
+                <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Total Balances</Typography>
+                <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>Assets stored on all MultiSafe
+                    wallets.</Typography>
                 <AssetBalanceList balances={stats!.balances}/>
             </Box>
             <Box sx={{mb: '50px'}}>
