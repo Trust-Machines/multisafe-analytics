@@ -13,10 +13,10 @@ const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
     const {balances} = props;
 
     const columns: GridColDef[] = [
-        {field: 'asset', headerName: 'Asset', width: 200},
-        {field: 'type', headerName: 'Type', width: 200},
+        {field: 'asset', headerName: 'Asset', width: 200, sortable: false},
+        {field: 'type', headerName: 'Type', width: 200, sortable: false},
         {field: 'balance', headerName: 'Balance', width: 200},
-        {field: 'contract', headerName: 'Contract', width: 700},
+        {field: 'contract', headerName: 'Contract', width: 700, sortable: false},
     ];
 
     const rows = [
@@ -63,14 +63,13 @@ const SafeList = (props: { safes: Safe[] }) => {
 
     const rows = safes.map(s => ({
         ...s,
-        owners: s.owners.length,
         balance: formatUnits(s.balance, 6).toNumber()
     }));
 
 
     const columns: GridColDef[] = [
         {
-            field: 'address', headerName: 'Address', sortable: false, width: 800, renderCell: p => {
+            field: 'address', headerName: 'Address', sortable: false, width: 600, renderCell: p => {
                 return <Box sx={{
                     color: blue['600'],
                     cursor: 'pointer',
@@ -83,7 +82,7 @@ const SafeList = (props: { safes: Safe[] }) => {
         {field: 'balance', headerName: 'Balance', width: 120, renderCell: (p) => <>{p.value} STX</>},
         {field: 'threshold', headerName: 'Threshold', width: 100},
         {field: 'nonce', headerName: 'Nonce', width: 100},
-        {field: 'owners', headerName: 'Owners', width: 100},
+        {field: 'owners', headerName: 'Owners', width: 300},
         {field: 'version', headerName: 'Version', width: 120},
         {field: 'status', headerName: 'Status', width: 100, sortable: false},
         {
@@ -173,7 +172,8 @@ function App() {
                 <AssetBalanceList balances={stats!.balances}/>
             </Box>
             <Box sx={{mb: '50px'}}>
-                <Typography sx={{mb: '10px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
+                <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
+                <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>All MultiSafe wallets deployed.</Typography>
                 <SafeList safes={safes}/>
             </Box>
         </div>
