@@ -4,6 +4,8 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import {Typography} from '@mui/material';
 import {blue, grey} from '@mui/material/colors';
+import {Tooltip} from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import {DataGrid, GridColDef, GridSortItem} from '@mui/x-data-grid';
 import moment from 'moment';
 import {formatUnits} from './helper';
@@ -69,7 +71,7 @@ const SafeList = (props: { safes: Safe[] }) => {
 
     const columns: GridColDef[] = [
         {
-            field: 'address', headerName: 'Address', sortable: false, width: 600, renderCell: p => {
+            field: 'address', headerName: 'Address', sortable: false, width: 700, renderCell: p => {
                 return <Box sx={{
                     color: blue['600'],
                     cursor: 'pointer',
@@ -82,7 +84,17 @@ const SafeList = (props: { safes: Safe[] }) => {
         {field: 'balance', headerName: 'Balance', width: 120, renderCell: (p) => <>{p.value} STX</>},
         {field: 'threshold', headerName: 'Threshold', width: 100},
         {field: 'nonce', headerName: 'Nonce', width: 100},
-        {field: 'owners', headerName: 'Owners', width: 300},
+        {
+            field: 'owners', headerName: 'Owners', renderCell: (p) => {
+                const title = <Box>{p.value.map((x: string) => <span key={x}>{x}<br/></span>)}</Box>
+                return <Box sx={{display: 'flex', alignItems: 'center'}}>
+                    <Box sx={{mr: '6px'}}>{p.value.length}</Box>
+                    <Tooltip title={title}><InfoIcon fontSize="small" sx={{color: grey[600]}}/></Tooltip>
+                </Box>
+            },
+            sortComparator: (v1, v2) => v1.length - v2.length,
+            filterable: false
+        },
         {field: 'version', headerName: 'Version', width: 120},
         {field: 'status', headerName: 'Status', width: 100, sortable: false},
         {
@@ -112,7 +124,6 @@ function App() {
     const [loading, setLoading] = useState(true);
     const [safes, setSafes] = useState<Safe[]>([]);
     const [stats, setStats] = useState<Stats | null>(null);
-
 
     useEffect(() => {
         const fetchSafes = () => {
@@ -162,8 +173,9 @@ function App() {
                     }} variant={network === 'testnet' ? 'contained' : 'outlined'}>Testnet</Button>
                 </ButtonGroup>
             </Box>
-            <Box sx={{mb: '25px', textAlign: 'center', fontSize: '22px', fontWeight: '500'}}>
-                {safe_count} Safes
+            <Box sx={{mb: '25px', textAlign: 'center'}}>
+                <Typography sx={{fontSize: '22px', fontWeight: '500'}}>{safe_count} Safes</Typography>
+                <Typography sx={{fontSize: '90%', color: grey[600]}}>on {network}</Typography>
             </Box>
             <Box sx={{mb: '50px'}}>
                 <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Total Balances</Typography>
@@ -173,7 +185,8 @@ function App() {
             </Box>
             <Box sx={{mb: '50px'}}>
                 <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
-                <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>All MultiSafe wallets deployed.</Typography>
+                <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>All MultiSafe wallets
+                    deployed.</Typography>
                 <SafeList safes={safes}/>
             </Box>
         </div>
