@@ -7,6 +7,7 @@ import {DataGrid, GridColDef, GridSortItem} from '@mui/x-data-grid';
 import moment from 'moment';
 import {formatUnits} from './helper';
 import {Network, Safe} from './types';
+import {blue} from '@mui/material/colors';
 
 function App() {
     const [network, setNetwork] = useState<Network>('mainnet');
@@ -37,7 +38,17 @@ function App() {
     }
 
     const columns: GridColDef[] = [
-        {field: 'address', headerName: 'Address', sortable: false, width: 800,},
+        {
+            field: 'address', headerName: 'Address', sortable: false, width: 800, renderCell: p => {
+                return <Box sx={{
+                    color: blue['600'],
+                    cursor: 'pointer',
+                    ':hover': {
+                        textDecoration: 'underline'
+                    }
+                }}>{p.value}</Box>
+            }
+        },
         {field: 'balance', headerName: 'Balance', width: 120, renderCell: (p) => <>{p.value} STX</>},
         {field: 'threshold', headerName: 'Threshold', width: 100},
         {field: 'nonce', headerName: 'Nonce', width: 100},
@@ -81,6 +92,7 @@ function App() {
                 </ButtonGroup>
             </Box>
             <Box sx={{mb: '50px'}}>
+                <Typography sx={{mb: '10px', fontSize: '26px', fontWeight: '600'}}>Safe List</Typography>
                 <DataGrid
                     rows={rows}
                     columns={columns}
