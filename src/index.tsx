@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {ThemeProvider, createTheme} from '@mui/material';
-import '@fontsource/lato';
+import '@fontsource/roboto';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const theme = createTheme({
     typography: {
-        'fontFamily': `"Lato", "Helvetica", "Arial", sans-serif`,
+        'fontFamily': `"Roboto", "Helvetica", "Arial", sans-serif`,
     },
 })
 
