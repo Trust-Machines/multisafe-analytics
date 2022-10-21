@@ -6,6 +6,7 @@ import {Typography} from '@mui/material';
 import {blue, grey} from '@mui/material/colors';
 import {Tooltip} from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
+import LinearProgress from '@mui/material/LinearProgress';
 import {DataGrid, GridColDef, GridSortItem} from '@mui/x-data-grid';
 import moment from 'moment';
 import {formatUnits} from './helper';
@@ -119,11 +120,13 @@ const SafeList = (props: { safes: Safe[] }) => {
     />
 }
 
+
 function App() {
     const [network, setNetwork] = useState<Network>('mainnet');
     const [loading, setLoading] = useState(true);
     const [safes, setSafes] = useState<Safe[]>([]);
     const [stats, setStats] = useState<Stats | null>(null);
+    const [safe, setSafe] = useState<Safe | null>(null);
 
     useEffect(() => {
         const fetchSafes = () => {
@@ -138,6 +141,7 @@ function App() {
             })
         }
 
+        setLoading(true);
         fetchSafes()
             .then(() => fetchStat())
             .then(() => {
@@ -145,11 +149,6 @@ function App() {
             })
     }, [network]);
 
-    if (loading) {
-        return null;
-    }
-
-    const {safe_count} = stats!;
 
     return (
         <div className="wrapper">
@@ -173,22 +172,33 @@ function App() {
                     }} variant={network === 'testnet' ? 'contained' : 'outlined'}>Testnet</Button>
                 </ButtonGroup>
             </Box>
-            <Box sx={{mb: '25px', textAlign: 'center'}}>
-                <Typography sx={{fontSize: '22px', fontWeight: '500'}}>{safe_count} Safes</Typography>
-                <Typography sx={{fontSize: '90%', color: grey[600]}}>on {network}</Typography>
-            </Box>
-            <Box sx={{mb: '50px'}}>
-                <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Total Balances</Typography>
-                <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>Assets stored on all MultiSafe
-                    wallets.</Typography>
-                <AssetBalanceList balances={stats!.balances}/>
-            </Box>
-            <Box sx={{mb: '50px'}}>
-                <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
-                <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>All MultiSafe wallets
-                    deployed.</Typography>
-                <SafeList safes={safes}/>
-            </Box>
+            {(() => {
+                if (loading) {
+                    return <LinearProgress/>;
+                }
+
+                const {safe_count} = stats!;
+
+                return <>
+                    <Box sx={{mb: '25px', textAlign: 'center'}}>
+                        <Typography sx={{fontSize: '22px', fontWeight: '500'}}>{safe_count} Safes</Typography>
+                        <Typography sx={{fontSize: '90%', color: grey[600]}}>on {network}</Typography>
+                    </Box>
+                    <Box sx={{mb: '50px'}}>
+                        <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Total Balances</Typography>
+                        <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>Assets stored on all MultiSafe
+                            wallets.</Typography>
+                        <AssetBalanceList balances={stats!.balances}/>
+                    </Box>
+                    <Box sx={{mb: '50px'}}>
+                        <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
+                        <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>All MultiSafe wallets
+                            deployed.</Typography>
+                        <SafeList safes={safes}/>
+                    </Box>
+                </>
+
+            })()}
         </div>
     );
 }
