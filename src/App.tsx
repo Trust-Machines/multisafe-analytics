@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import {Typography} from '@mui/material';
 import {DataGrid, GridColDef, GridSortItem} from '@mui/x-data-grid';
 import moment from 'moment';
 import {formatUnits} from './helper';
 import {Network, Safe} from './types';
-
 
 function App() {
     const [network, setNetwork] = useState<Network>('mainnet');
@@ -60,6 +60,16 @@ function App() {
 
     return (
         <div className="wrapper">
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mb: '50px'
+            }}>
+                <Box component="img" src="/logo512.png" sx={{width: '140px', height: '140px', mb: '20px'}}/>
+                <Typography sx={{fontSize: '24px'}}><strong>MultiSafe</strong> Analytics</Typography>
+            </Box>
             <Box sx={{display: 'flex', justifyContent: 'center', mb: '50px'}}>
                 <ButtonGroup variant="outlined" aria-label="outlined button group">
                     <Button onClick={() => {
@@ -82,7 +92,6 @@ function App() {
                     experimentalFeatures={{newEditingApi: false}}
                     sortModel={sortModel}
                     onSortModelChange={(model) => setSortModel(model)}
-
                 />
             </Box>
         </div>
