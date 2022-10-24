@@ -232,14 +232,13 @@ function App() {
                     </Box>
                     <Box sx={{mb: '50px'}}>
                         <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Total Balances</Typography>
-                        <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>Assets stored on all MultiSafe
+                        <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>Assets stored across all MultiSafe
                             wallets.</Typography>
                         <Paper><AssetBalanceList balances={stats!.balances}/></Paper>
                     </Box>
                     <Box sx={{mb: '50px'}}>
                         <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
-                        <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>All MultiSafe wallets
-                            deployed.</Typography>
+                        <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>List of all MultiSafe wallets.</Typography>
                         <Paper><SafeList safes={safes} onSafeSelect={showSafe}/></Paper>
                     </Box>
                 </>
