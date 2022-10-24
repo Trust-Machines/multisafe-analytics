@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import {blue, grey} from '@mui/material/colors';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
+import Paper from '@mui/material/Paper';
 import {DataGrid, GridColDef, GridSortItem} from '@mui/x-data-grid';
 import moment from 'moment/moment';
 import {formatUnits} from '../helper';
@@ -62,7 +63,7 @@ const SafeList = (props: { safes: Safe[], onSafeSelect: (safe: string) => void }
         },
     ];
 
-    return <DataGrid
+    return <Paper><DataGrid
         rows={rows}
         columns={columns}
         pageSize={20}
@@ -73,7 +74,7 @@ const SafeList = (props: { safes: Safe[], onSafeSelect: (safe: string) => void }
         experimentalFeatures={{newEditingApi: false}}
         sortModel={sortModel}
         onSortModelChange={(model) => setSortModel(model)}
-    />
+    /></Paper>
 }
 
 export default SafeList;

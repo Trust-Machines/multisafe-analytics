@@ -6,8 +6,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import {grey} from '@mui/material/colors';
 import LinearProgress from '@mui/material/LinearProgress';
-import Paper from '@mui/material/Paper';
 import CloseModal from './components/close-modal';
+import {H1, Muted} from './components/text';
 import Brand from './components/brand';
 import NetworkMenu from './components/network-menu';
 import AssetBalanceList from './components/asset-balance-list';
@@ -74,20 +74,17 @@ function App() {
 
                 return <>
                     <Box sx={{mb: '25px', textAlign: 'center'}}>
-                        <Typography sx={{fontSize: '22px', fontWeight: '500'}}>{safe_count} Safes</Typography>
+                        <H1 mb="0px">{safe_count} Safes</H1>
                         <Typography sx={{fontSize: '90%', color: grey[600]}}>on {network}</Typography>
                     </Box>
                     <Box sx={{mb: '50px'}}>
-                        <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Total Balances</Typography>
-                        <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>Assets stored across all
-                            MultiSafe
-                            wallets.</Typography>
-                        <Paper><AssetBalanceList balances={stats!.balances}/></Paper>
+                        <H1>Total Balances</H1>
+                        <Muted>Assets stored across all MultiSafe wallets.</Muted>
+                        <AssetBalanceList balances={stats!.balances}/>
                     </Box>
                     <Box sx={{mb: '50px'}}>
-                        <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
-                        <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>List of all MultiSafe
-                            wallets.</Typography>
+                        <H1>Safe List</H1>
+                        <Muted>List of all MultiSafe wallets.</Muted>
                         <SafeList safes={safes} onSafeSelect={showSafe}/>
                     </Box>
                 </>
