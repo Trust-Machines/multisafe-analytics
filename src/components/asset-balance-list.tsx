@@ -21,7 +21,7 @@ const AssetBalanceList = (props: { balances: AssetBalance[], paginate?: boolean 
                 asset: 'STX',
                 type: 'stx',
                 balance: formatUnits(balances.find(x => x.asset === 'STX')!.balance, 6).toNumber(),
-                contract: ''
+                contract: '--'
             } : null
         ],
         ...balances.map(x => x.asset_info && ('decimals' in x.asset_info) ? ({
@@ -54,7 +54,7 @@ const AssetBalanceList = (props: { balances: AssetBalance[], paginate?: boolean 
                 return <DataGrid {...gridProps} pageSize={5} rowsPerPageOptions={[5]}/>
             }
 
-            return <DataGrid {...gridProps}/>
+            return <DataGrid {...gridProps} hideFooter={true}/>
         })()}
     </Paper>
 }
