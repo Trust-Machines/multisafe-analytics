@@ -60,7 +60,7 @@ function App() {
                     <DialogTitle>{safe.address}<CloseModal onClick={() => {
                         setSafe(null);
                     }}/></DialogTitle>
-                    <DialogContent sx={{padding: '20px'}}>
+                    <DialogContent sx={{padding: '20px', background:'#eeeeee'}}>
                         <SafeDetail safe={safe} network={network}/>
                     </DialogContent>
                 </Dialog>
