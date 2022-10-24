@@ -80,7 +80,7 @@ function App() {
                     <Box sx={{mb: '50px'}}>
                         <H1>Total Balances</H1>
                         <Muted>Assets stored across all MultiSafe wallets.</Muted>
-                        <AssetBalanceList balances={stats!.balances}/>
+                        <AssetBalanceList balances={stats!.balances} paginate={true}/>
                     </Box>
                     <Box sx={{mb: '50px'}}>
                         <H1>Safe List</H1>

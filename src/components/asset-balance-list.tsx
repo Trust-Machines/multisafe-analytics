@@ -4,8 +4,8 @@ import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {formatUnits} from '../helper';
 import {AssetBalance} from '../types';
 
-const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
-    const {balances} = props;
+const AssetBalanceList = (props: { balances: AssetBalance[], paginate?: boolean }) => {
+    const {balances, paginate} = props;
 
     const columns: GridColDef[] = [
         {field: 'asset', headerName: 'Asset', width: 200, sortable: false},
@@ -19,7 +19,7 @@ const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
             balances.find(x => x.asset === 'STX') ? {
                 id: 'stx',
                 asset: 'STX',
-                type: '',
+                type: 'stx',
                 balance: formatUnits(balances.find(x => x.asset === 'STX')!.balance, 6).toNumber(),
                 contract: ''
             } : null
@@ -38,18 +38,24 @@ const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
             balance: x.balance,
             contract: x.asset
         }) : null).filter(x => x).sort((a, b) => Number(b!.balance) - Number(a!.balance)),
-    ].filter(x => x);
+    ].filter(x => x)
+
+    const gridProps = {
+        rows,
+        columns,
+        disableSelectionOnClick: true,
+        getRowId: (r: any) => r.id,
+        autoHeight: true
+    }
 
     return <Paper>
-        <DataGrid
-            rows={rows}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            disableSelectionOnClick
-            getRowId={(r) => r.id}
-            autoHeight
-        />
+        {(() => {
+            if (paginate) {
+                return <DataGrid {...gridProps} pageSize={5} rowsPerPageOptions={[5]}/>
+            }
+
+            return <DataGrid {...gridProps}/>
+        })()}
     </Paper>
 }
 
