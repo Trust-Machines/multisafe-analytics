@@ -14,6 +14,10 @@ export interface Safe {
     balance: string
 }
 
+export interface SafeWithBalances extends Safe {
+    balances: AssetBalance[]
+}
+
 export interface AssetBalance {
     asset: string,
     balance: string,

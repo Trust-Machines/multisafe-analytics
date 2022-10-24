@@ -1,4 +1,5 @@
 import React from 'react';
+import Paper from '@mui/material/Paper';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {formatUnits} from '../helper';
 import {AssetBalance} from '../types';
@@ -14,13 +15,15 @@ const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
     ];
 
     const rows = [
-        {
-            id: 'stx',
-            asset: 'STX',
-            type: '',
-            balance: formatUnits(balances.find(x => x.asset === 'STX')!.balance, 6).toNumber(),
-            contract: ''
-        },
+        ...[
+            balances.find(x => x.asset === 'STX') ? {
+                id: 'stx',
+                asset: 'STX',
+                type: '',
+                balance: formatUnits(balances.find(x => x.asset === 'STX')!.balance, 6).toNumber(),
+                contract: ''
+            } : null
+        ],
         ...balances.map(x => x.asset_info && ('decimals' in x.asset_info) ? ({
             id: x.asset,
             asset: x.asset_info.symbol,
@@ -35,17 +38,19 @@ const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
             balance: x.balance,
             contract: x.asset
         }) : null).filter(x => x).sort((a, b) => Number(b!.balance) - Number(a!.balance)),
-    ];
+    ].filter(x => x);
 
-    return <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        disableSelectionOnClick
-        getRowId={(r) => r.id}
-        autoHeight
-    />
+    return <Paper>
+        <DataGrid
+            rows={rows}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            disableSelectionOnClick
+            getRowId={(r) => r.id}
+            autoHeight
+        />
+    </Paper>
 }
 
 export default AssetBalanceList;

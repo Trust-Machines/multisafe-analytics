@@ -7,19 +7,20 @@ import DialogContent from '@mui/material/DialogContent';
 import {grey} from '@mui/material/colors';
 import LinearProgress from '@mui/material/LinearProgress';
 import Paper from '@mui/material/Paper';
+import CloseModal from './components/close-modal';
 import Brand from './components/brand';
 import NetworkMenu from './components/network-menu';
 import AssetBalanceList from './components/asset-balance-list';
 import SafeList from './components/safe-list';
-import CloseModal from './components/close-modal';
-import {Network, Safe, Stats} from './types';
+import SafeDetail from './components/safe-detail';
+import {Network, Safe, SafeWithBalances, Stats} from './types';
 
 function App() {
     const [network, setNetwork] = useState<Network>('mainnet');
     const [loading, setLoading] = useState(true);
     const [safes, setSafes] = useState<Safe[]>([]);
     const [stats, setStats] = useState<Stats | null>(null);
-    const [safe, setSafe] = useState<Safe | null>(null);
+    const [safe, setSafe] = useState<SafeWithBalances | null>(null);
 
     useEffect(() => {
         const fetchSafes = () => {
@@ -60,9 +61,7 @@ function App() {
                         setSafe(null);
                     }}/></DialogTitle>
                     <DialogContent sx={{padding: '20px'}}>
-                        <Box>
-
-                        </Box>
+                        <SafeDetail safe={safe} network={network}/>
                     </DialogContent>
                 </Dialog>
             </>}
@@ -89,7 +88,7 @@ function App() {
                         <Typography sx={{mb: '6px', fontSize: '22px', fontWeight: '500'}}>Safe List</Typography>
                         <Typography sx={{mb: '10px', fontSize: '90%', color: grey[600]}}>List of all MultiSafe
                             wallets.</Typography>
-                        <Paper><SafeList safes={safes} onSafeSelect={showSafe}/></Paper>
+                        <SafeList safes={safes} onSafeSelect={showSafe}/>
                     </Box>
                 </>
             })()}
