@@ -14,10 +14,11 @@ import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import AssetBalanceList from './asset-balance-list';
 import {Muted} from './text';
 import {Network, SafeWithBalances} from '../types';
+import Link from './link';
 
 
 const SafeDetail = (props: { safe: SafeWithBalances, network: Network }) => {
-    const {safe} = props;
+    const {safe, network} = props;
 
     return <Box sx={{mt: '20px'}}>
         <TableContainer component={Paper} sx={{mb: '40px'}}>
@@ -25,11 +26,12 @@ const SafeDetail = (props: { safe: SafeWithBalances, network: Network }) => {
                 <TableBody>
                     <TableRow>
                         <TableCell width="200"><strong>Address</strong></TableCell>
-                        <TableCell>{safe.address}</TableCell>
+                        <TableCell><Link to={safe.address} network={network}/></TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell width="200"><strong>Owners</strong></TableCell>
-                        <TableCell>{safe.owners.map(x => <Box component="p">{x}</Box>)}</TableCell>
+                        <TableCell>{safe.owners.map(x => <Box component="p" key={x}>
+                            <Link to={x} network={network}/></Box>)}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell width="200"><strong>Threshold</strong></TableCell>
@@ -52,10 +54,13 @@ const SafeDetail = (props: { safe: SafeWithBalances, network: Network }) => {
                         <TableCell>
                             <Box component="p">{moment.unix(safe.time).format('MMMM Do YYYY, h:mm a')}</Box>
                             <Box component="p" sx={{display: 'flex', alignItems: 'center'}}>
-                                <PersonOutlineIcon fontSize="small" sx={{mr: '6px'}}/> {safe.sender}</Box>
+                                <PersonOutlineIcon fontSize="small" sx={{mr: '6px'}}/><Link to={safe.sender}
+                                                                                            network={network}/>
+                            </Box>
                             <Box component="p" sx={{display: 'flex', alignItems: 'center'}}>
-                                <SwapHorizIcon fontSize="small" sx={{mr: '6px'}}/> {safe.tx_hash}</Box>
-
+                                <SwapHorizIcon fontSize="small" sx={{mr: '6px'}}/><Link to={safe.tx_hash}
+                                                                                        network={network}/>
+                            </Box>
                         </TableCell>
                     </TableRow>
                 </TableBody>
@@ -66,7 +71,7 @@ const SafeDetail = (props: { safe: SafeWithBalances, network: Network }) => {
             if (safe.balances.length === 0) {
                 return <Muted>Nothing</Muted>
             } else {
-                return <Paper><AssetBalanceList balances={safe.balances}/></Paper>
+                return <Paper><AssetBalanceList balances={safe.balances} network={network}/></Paper>
             }
         })()}
     </Box>;

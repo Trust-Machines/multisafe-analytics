@@ -2,16 +2,21 @@ import React from 'react';
 import Paper from '@mui/material/Paper';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {formatUnits} from '../helper';
-import {AssetBalance} from '../types';
+import {AssetBalance, Network} from '../types';
+import Link from './link';
 
-const AssetBalanceList = (props: { balances: AssetBalance[], paginate?: boolean }) => {
-    const {balances, paginate} = props;
+const AssetBalanceList = (props: { balances: AssetBalance[], network: Network, paginate?: boolean }) => {
+    const {balances, paginate, network} = props;
 
     const columns: GridColDef[] = [
         {field: 'asset', headerName: 'Asset', width: 200, sortable: false},
         {field: 'type', headerName: 'Type', width: 200, sortable: false},
         {field: 'balance', headerName: 'Balance', width: 200},
-        {field: 'contract', headerName: 'Contract', width: 700, sortable: false},
+        {
+            field: 'contract', headerName: 'Contract', width: 700, sortable: false, renderCell: (p) => {
+                return p.value === '--' ? p.value : <Link to={p.value} network={network}/>
+            }
+        },
     ];
 
     const rows = [

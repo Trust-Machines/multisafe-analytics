@@ -60,7 +60,7 @@ function App() {
                     <DialogTitle>{safe.address}<CloseModal onClick={() => {
                         setSafe(null);
                     }}/></DialogTitle>
-                    <DialogContent sx={{padding: '20px', background:'#eeeeee'}}>
+                    <DialogContent sx={{padding: '20px', background: '#eeeeee'}}>
                         <SafeDetail safe={safe} network={network}/>
                     </DialogContent>
                 </Dialog>
@@ -80,7 +80,7 @@ function App() {
                     <Box sx={{mb: '50px'}}>
                         <H1>Total Balances</H1>
                         <Muted>Assets stored across all MultiSafe wallets.</Muted>
-                        <AssetBalanceList balances={stats!.balances} paginate={true}/>
+                        <AssetBalanceList balances={stats!.balances} network={network} paginate={true}/>
                     </Box>
                     <Box sx={{mb: '50px'}}>
                         <H1>Safe List</H1>
