@@ -46,18 +46,21 @@ const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
 
     const rows = [
         {
+            id: 'stx',
             asset: 'STX',
             type: '',
             balance: formatUnits(balances.find(x => x.asset === 'STX')!.balance, 6).toNumber(),
             contract: ''
         },
         ...balances.map(x => x.asset_info && ('decimals' in x.asset_info) ? ({
+            id: x.asset,
             asset: x.asset_info.symbol,
             type: 'Fungible token',
             'balance': formatUnits(x.balance, x.asset_info.decimals).toNumber(),
             contract: x.asset
         }) : null).filter(x => x).sort((a, b) => Number(b!.balance) - Number(a!.balance)),
         ...balances.map(x => x.asset_info && !('decimals' in x.asset_info) ? ({
+            id: x.asset,
             asset: x.asset_info.identifier,
             type: 'Non-fungible token',
             balance: x.balance,
@@ -71,7 +74,7 @@ const AssetBalanceList = (props: { balances: AssetBalance[] }) => {
         pageSize={5}
         rowsPerPageOptions={[5]}
         disableSelectionOnClick
-        getRowId={(r) => r.asset}
+        getRowId={(r) => r.id}
         autoHeight
     />
 }
